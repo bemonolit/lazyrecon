@@ -11,8 +11,8 @@ auquatoneThreads=5
 subdomainThreads=10
 dirsearchThreads=50
 dirsearchWordlist=~/tools/dirsearch/db/dicc.txt
-massdnsWordlist=~/tools/SecLists/Discovery/DNS/clean-jhaddix-dns.txt
-chromiumPath=/snap/bin/chromium
+massdnsWordlist=~/tools/seclists/Discovery/DNS/dns-Jhaddix.txt
+chromiumPath=/usr/bin/chromium
 ########################################
 # Happy Hunting
 ########################################
@@ -113,7 +113,7 @@ recon(){
   echo "Listing subdomains using sublister..."
   python ~/tools/Sublist3r/sublist3r.py -d $domain -t 10 -v -o ./$domain/$foldername/$domain.txt > /dev/null
   echo "Checking certspotter..."
-  curl -s https://certspotter.com/api/v0/certs\?domain\=$domain | jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | sort -u | grep $domain >> ./$domain/$foldername/$domain.txt
+  curl -s https://api.certspotter.com/v1/issuances\?domain\=$1\&match_wildcards\=true\&include_subdomains\=true\&expand\=dns_names | jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | sort -u | grep $domain >> ./$domain/$foldername/$domain.txt
   nsrecords $domain
   excludedomains
   echo "Starting discovery..."
